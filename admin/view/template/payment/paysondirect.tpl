@@ -112,14 +112,14 @@
                                 <option value="5" <?php echo ($paysondirect_payment_method == 5 ? 'selected="selected"' : '""') . '>' . $payment_method_sms_bank; ?></option>
                                 <option value="6" <?php echo ($paysondirect_payment_method == 6 ? 'selected="selected"' : '""') . '>' . $payment_method_sms_card; ?></option>
                                 <option value="7" <?php echo ($paysondirect_payment_method == 7 ? 'selected="selected"' : '""') . '>' . $payment_method_card_bank; ?></option>
-                                <option value="8" <?php echo ($paysondirect_payment_method == 0 ? 'selected="selected"' : '""') . '>' . $payment_method_card_bank_sms; ?></option>
-                                <option value="9" <?php echo ($paysondirect_payment_method == 1 ? 'selected="selected"' : '""') . '>' . $payment_method_sms_inv; ?></option>
-                                <option value="10" <?php echo ($paysondirect_payment_method == 2 ? 'selected="selected"' : '""') . '>' . $payment_method_bank_inv; ?></option>
-                                <option value="11" <?php echo ($paysondirect_payment_method == 3 ? 'selected="selected"' : '""') . '>' . $payment_method_card_inv; ?></option>                                
-                                <option value="12" <?php echo ($paysondirect_payment_method == 4 ? 'selected="selected"' : '""') . '>' . $payment_method_sms_bank_inv; ?></option>
-                                <option value="13" <?php echo ($paysondirect_payment_method == 5 ? 'selected="selected"' : '""') . '>' . $payment_method_sms_card_inv; ?></option>
-                                <option value="14" <?php echo ($paysondirect_payment_method == 6 ? 'selected="selected"' : '""') . '>' . $payment_method_inv_car_ban; ?></option>
-                                <option value="15" <?php echo ($paysondirect_payment_method == 7 ? 'selected="selected"' : '""') . '>' . $payment_method_sms_bank_card_inv; ?></option>
+                                <option value="8" <?php echo ($paysondirect_payment_method == 8 ? 'selected="selected"' : '""') . '>' . $payment_method_card_bank_sms; ?></option>
+                                <option value="9" <?php echo ($paysondirect_payment_method == 9 ? 'selected="selected"' : '""') . '>' . $payment_method_sms_inv; ?></option>
+                                <option value="10" <?php echo ($paysondirect_payment_method == 10 ? 'selected="selected"' : '""') . '>' . $payment_method_bank_inv; ?></option>
+                                <option value="11" <?php echo ($paysondirect_payment_method == 11 ? 'selected="selected"' : '""') . '>' . $payment_method_card_inv; ?></option>                                
+                                <option value="12" <?php echo ($paysondirect_payment_method == 12 ? 'selected="selected"' : '""') . '>' . $payment_method_sms_bank_inv; ?></option>
+                                <option value="13" <?php echo ($paysondirect_payment_method == 13 ? 'selected="selected"' : '""') . '>' . $payment_method_sms_card_inv; ?></option>
+                                <option value="14" <?php echo ($paysondirect_payment_method == 14 ? 'selected="selected"' : '""') . '>' . $payment_method_inv_car_ban; ?></option>
+                                <option value="15" <?php echo ($paysondirect_payment_method == 15 ? 'selected="selected"' : '""') . '>' . $payment_method_sms_bank_card_inv; ?></option>
                             </select>
                         </div>
                     </div>
