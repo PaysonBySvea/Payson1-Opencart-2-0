@@ -19,10 +19,11 @@ class PaymentDetails {
     protected $senderEmail;
     
     protected $shippingAddressName;
-	protected $shippingAddressStreetAddress;
-	protected $shippingAddressPostalCode;
-	protected $shippingAddressCity;
-	protected $shippingAddressCountry;
+    protected $shippingAddressStreetAddress;
+    protected $shippingAddressPostalCode;
+    protected $shippingAddressCity;
+    protected $shippingAddressCountry;
+    protected $amount;
 
     public function __construct($responseData) {
         $this->orderItems = OrderItem::parseOrderItems($responseData);
@@ -59,7 +60,9 @@ class PaymentDetails {
         if (isset($responseData["shippingAddress.country"])){
             $this->shippingAddressCountry = $responseData["shippingAddress.country"];
         }
-        
+        if (isset($responseData["receiverList.receiver(0).amount"])){
+            $this->amount = $responseData["receiverList.receiver(0).amount"];
+        }
         if (isset($responseData["correlationId"])){
             $this->correlationId = $responseData["correlationId"];
         }
@@ -248,6 +251,11 @@ class PaymentDetails {
     public function getShippingAddressCountry() {
         return $this->shippingAddressCountry;
     }
+    
+    public function getAmount() {
+        return $this->amount;
+    }
+
 
     public function __toString() {
         $receiversString = "";

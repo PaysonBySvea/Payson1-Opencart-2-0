@@ -65,7 +65,9 @@ class ControllerPaymentPaysondirect extends Controller {
         $this->data['sender_email'] = $order_data['email'];
         $this->data['sender_first_name'] = html_entity_decode($order_data['firstname'], ENT_QUOTES, 'UTF-8');
         $this->data['sender_last_name'] = html_entity_decode($order_data['lastname'], ENT_QUOTES, 'UTF-8');
-        //Call PaysonAPI    	
+        $this->data['countrycode'] = html_entity_decode($order_data['payment_country'], ENT_QUOTES, 'UTF-8');
+
+        //Call PaysonAPI        
         $result = $this->getPaymentURL();
 
         $returnData = array();
@@ -116,6 +118,18 @@ class ControllerPaymentPaysondirect extends Controller {
         }
     }
 
+    //get invoice fee + tax 
+    public function getInvoiceFee() {
+        $this->load->language('payment/paysondirect');
+        $this->load->model('checkout/order');
+        $this->load->language('total/paysoninvoice_fee');
+        $tax = $this->config->get('paysoninvoice_fee_tax_class_id');
+        $tax_rule_id = $this->db->query("SELECT tax_rate_id FROM `" . DB_PREFIX . "tax_rule` where  tax_class_id='" . $tax . "'");
+        $invoiceFeeTax = $this->db->query("SELECT rate FROM `" . DB_PREFIX . "tax_rate` where  tax_rate_id='" . $tax_rule_id->row['tax_rate_id'] . "'");
+        $invoiceFeeTax = ($invoiceFeeTax->row['rate'] / 100) + 1;
+        $fee = $this->config->get('paysoninvoice_fee_fee') * $invoiceFeeTax;
+        return $fee;
+    }
     /**
      * 
      * @param PaymentDetails $paymentDetails
@@ -123,7 +137,7 @@ class ControllerPaymentPaysondirect extends Controller {
     private function handlePaymentDetails($paymentDetails, $orderId = 0, $ipnCall = false) {
         $this->load->language('payment/paysondirect');
         $this->load->model('checkout/order');
-
+        $this->load->language('total/paysoninvoice_fee');
         $paymentType = $paymentDetails->getType();
         $transferStatus = $paymentDetails->getStatus();
         $invoiceStatus = $paymentDetails->getInvoiceStatus();
@@ -133,6 +147,11 @@ class ControllerPaymentPaysondirect extends Controller {
         if (!$order_info) {
             return false;
         }
+
+        $amount = $paymentDetails->getAmount();
+
+        $total = $amount += $this->getInvoiceFee();
+
 
         $this->storeIPNResponse($paymentDetails, $orderId);
 
@@ -144,14 +163,34 @@ class ControllerPaymentPaysondirect extends Controller {
 
         if ($paymentType == "INVOICE" && $invoiceStatus == "ORDERCREATED") {
             $succesfullStatus = $this->config->get('paysondirect_invoice_status_id');
+
+            $invoiceFee = $this->db->query("SELECT code FROM `" . DB_PREFIX . "order_total` where code='paysoninvoice_fee' and order_id='" . $orderId . "'");
+
+            if ($invoiceFee->num_rows == 0) {
+
+                $this->db->query("INSERT INTO `" . DB_PREFIX . "order_total` (order_id, code, title, value, sort_order)
+                    VALUES('" . $orderId . "', "
+                        . "'paysoninvoice_fee',  "
+                        . "'" . $this->language->get('text_paysoninvoice_fee') . "',  "
+                        . "'" . $this->getInvoiceFee() . "',  "
+                        . "'" . 2 . "')");
+
+                $this->db->query("UPDATE `" . DB_PREFIX . "order_total` SET
+                                value  = '" . $total . "'
+                                WHERE order_id      = '" . $orderId . "' 
+                                and code = 'total'");
+            }
+
             $this->db->query("UPDATE `" . DB_PREFIX . "order` SET 
                                 shipping_firstname  = '" . $paymentDetails->getShippingAddressName() . "',
-                                shipping_lastname 	= '',
-                                shipping_address_1 	= '" . $paymentDetails->getShippingAddressStreetAddress() . "',
-                                shipping_city 		= '" . $paymentDetails->getShippingAddressCity() . "', 
-                                shipping_country 	= '" . $paymentDetails->getShippingAddressCountry() . "', 
-                                shipping_postcode 	= '" . $paymentDetails->getShippingAddressPostalCode() . "'
-                                WHERE order_id 		= '" . $orderId . "'");
+                                shipping_lastname   = '',
+                                shipping_address_1  = '" . $paymentDetails->getShippingAddressStreetAddress() . "',
+                                shipping_city       = '" . $paymentDetails->getShippingAddressCity() . "', 
+                                shipping_country    = '" . $paymentDetails->getShippingAddressCountry() . "', 
+                                shipping_postcode   = '" . $paymentDetails->getShippingAddressPostalCode() . "',
+                                total                   = '" . $total . "',
+                                payment_code            = 'paysoninvoice'
+                                WHERE order_id      = '" . $orderId . "'");
         }
 
         if ($succesfullStatus) {
@@ -209,10 +248,28 @@ class ControllerPaymentPaysondirect extends Controller {
         $this->load->language('payment/paysondirect');
         $constraints = $this->getConstrains($this->config->get('paysondirect_payment_method'));
         $orderItems = $this->getOrderItems();
+        $invoiceFee = $this->getInvoiceFee();
+        if (in_array(FundingConstraint::INVOICE, $constraints)) {
+//          If order amount is less than 30, then remove invoice option from funding_array            
+            if ($this->data['amount'] < 30) {
+                $key = array_search(FundingConstraint::INVOICE, $constraints);
+                unset($constraints[$key]);
+            }
 
-        $invoiceFee = $this->config->get('paysoninvoice_fee_fee');
-        if ($invoiceFee && in_array(FundingConstraint::INVOICE, $constraints)) {
-            
+//          If currency not SEK, then remove invoice option from funding_array
+            if ($this->currencyPaysondirect() != 'SEK') {
+                $key = array_search(FundingConstraint::INVOICE, $constraints);
+                unset($constraints[$key]);
+            }
+//          If not order not from Sweden, remove invoice option from funding_array
+            $countryCode = trim(strtoupper($this->data['countrycode']));
+            if($countryCode!=='SWEDEN' && $countryCode!=='SVERIGE'){                    
+               $key = array_search(FundingConstraint::INVOICE, $constraints);
+                unset($constraints[$key]); 
+            }         
+        }
+//      If Invoice still exist after these checks then add InvoiceFee to order.
+        if (in_array(FundingConstraint::INVOICE, $constraints)) {
             $this->data['amount'] += $invoiceFee;
         }
         if (!$this->testMode) {
@@ -235,9 +292,9 @@ class ControllerPaymentPaysondirect extends Controller {
 
         $showReceiptPage = $this->config->get('paysondirect_receipt');
         $payData->setShowReceiptPage($showReceiptPage);
-        if(in_array(FundingConstraint::INVOICE, $constraints)){           
+        if (in_array(FundingConstraint::INVOICE, $constraints)) {
             $this->writeArrayToLog($orderItems, sprintf('Order items sent to Payson, with Payson Invoice as optional payment option. Invoice fee(%sSEK) Total amount(%sSEK).', $this->config->get('paysoninvoice_fee_fee'), $this->data['amount']));
-        }else{
+        } else {
             $this->writeArrayToLog($orderItems, sprintf('Order items sent to Payson, with Payson direct as payment option, Total amount(%sSEK)', $this->data['amount']));
         }
         
@@ -456,24 +513,24 @@ class ControllerPaymentPaysondirect extends Controller {
     private function storeIPNResponse($paymentDetails, $orderId) {
 
         $this->db->query("INSERT INTO " . DB_PREFIX . "payson_order SET 
-	  						order_id                      = '" . $orderId . "', 
-	  						valid                         = '" . 1 . "', 
-	  						added 						  = NOW(), 
-	  						updated                       = NOW(), 
-	  						ipn_status                    = '" . $paymentDetails->getStatus() . "', 	
-	  						sender_email                  = '" . $paymentDetails->getSenderEmail() . "', 
-	  						currency_code                 = '" . $paymentDetails->getCurrencyCode() . "',
-	  						tracking_id                   = '" . $paymentDetails->getTrackingId() . "',
-	  						type                          = '" . $paymentDetails->getType() . "',
-	  						purchase_id                   = '" . $paymentDetails->getPurchaseId() . "',
-	  						invoice_status                = '" . $paymentDetails->getInvoiceStatus() . "',
-	  						customer                      = '" . $paymentDetails->getCustom() . "', 
-	  						shippingAddress_name          = '" . $paymentDetails->getShippingAddressName() . "', 
-	  						shippingAddress_street_ddress = '" . $paymentDetails->getShippingAddressStreetAddress() . "', 
-	  						shippingAddress_postal_code   = '" . $paymentDetails->getShippingAddressPostalCode() . "', 
-	  						shippingAddress_city 		  = '" . $paymentDetails->getShippingAddressPostalCode() . "', 
-	  						shippingAddress_country       = '" . $paymentDetails->getShippingAddressCity() . "', 
-	  						token                         =  '" . $paymentDetails->getToken() . "'"
+                            order_id                      = '" . $orderId . "', 
+                            valid                         = '" . 1 . "', 
+                            added                         = NOW(), 
+                            updated                       = NOW(), 
+                            ipn_status                    = '" . $paymentDetails->getStatus() . "',     
+                            sender_email                  = '" . $paymentDetails->getSenderEmail() . "', 
+                            currency_code                 = '" . $paymentDetails->getCurrencyCode() . "',
+                            tracking_id                   = '" . $paymentDetails->getTrackingId() . "',
+                            type                          = '" . $paymentDetails->getType() . "',
+                            purchase_id                   = '" . $paymentDetails->getPurchaseId() . "',
+                            invoice_status                = '" . $paymentDetails->getInvoiceStatus() . "',
+                            customer                      = '" . $paymentDetails->getCustom() . "', 
+                            shippingAddress_name          = '" . $paymentDetails->getShippingAddressName() . "', 
+                            shippingAddress_street_ddress = '" . $paymentDetails->getShippingAddressStreetAddress() . "', 
+                            shippingAddress_postal_code   = '" . $paymentDetails->getShippingAddressPostalCode() . "', 
+                            shippingAddress_city          = '" . $paymentDetails->getShippingAddressPostalCode() . "', 
+                            shippingAddress_country       = '" . $paymentDetails->getShippingAddressCity() . "', 
+                            token                         =  '" . $paymentDetails->getToken() . "'"
         );
     }
 
@@ -501,13 +558,13 @@ class ControllerPaymentPaysondirect extends Controller {
     public function paysonApiError($error) {
         $this->load->language('payment/paysondirect');
         $error_code = '<html>
-							<head>
-								<script type="text/javascript"> 
-									alert("' . $error . $this->language->get('text_payson_payment_method') . '");
-									window.location="' . (HTTPS_SERVER . 'index.php?route=checkout/checkout') . '";
-								</script>
-							</head>
-					</html>';
+                            <head>
+                                <script type="text/javascript"> 
+                                    alert("' . $error . $this->language->get('text_payson_payment_method') . '");
+                                    window.location="' . (HTTPS_SERVER . 'index.php?route=checkout/checkout') . '";
+                                </script>
+                            </head>
+                    </html>';
         echo ($error_code);
         exit;
     }
