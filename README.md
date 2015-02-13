@@ -18,19 +18,13 @@ Module for OpenCart implementing Payson
 
 * Login into your web shop Administration Panel.
 
-* Go to Extensions->Payments and install Payson Direct. 
+* Go to Extensions->Payments and install Payson All in One. 
 
 * Click Edit.
 
 * Enter your Email, Agent ID,  MD5 Key, Payment method and secure word before enabling the module.
 
 * Click Save.
-
-* Go to Extensions->Payments and Payson Invoice.
-
-* Enter your Email, Agent ID,  MD5 Key, secure word and Order totals to ignore  before enabling the module.
-
-* Click Save.	
 
 #### Invoice fee
 
@@ -52,7 +46,7 @@ Module for OpenCart implementing Payson
 
 * Login into your web shop Administration Panel.
 
-* Go to Extensions->Payments. Uninstall Payson Direct and Payson Invoice. 
+* Go to Extensions->Payments. Uninstall Payson All in One. 
 
 * Go to Opencart folder to the root directory of your store.
 
@@ -63,16 +57,15 @@ Module for OpenCart implementing Payson
 Admin/contoller/payment/paysondirect.php
 Admin/contoller/payment/paysoninvoice.php
 
-Admin/contoller/total/paysoninvoice.fee.php (new)
+Admin/contoller/total/paysoninvoice.fee.php 
 
 Admin/language/english/payment/paysondirect.php
 Admin/language/english/payment/paysoninvoice.php
 Admin/language/swedish/payment/paysondirect.php
 Admin/language/swedish/payment/paysoninvoice.php
 
-Admin/language/english/total/paysoninvoice.fee.php  (new)
-Admin/language/swedish/total/paysoninvoice.fee.php (new)
-
+Admin/language/english/total/paysoninvoice.fee.php 
+Admin/language/swedish/total/paysoninvoice.fee.php 
 Admin/model/module/paysondirect.php
 Admin/model/module/paysoninvoice.php
 
@@ -82,7 +75,7 @@ Admin/view/image/payment/paysoninvoice.png
 Admin/view/template/payment/paysondirect.tpl
 Admin/view/template/payment/paysoninvoice.tpl
 
-Admin/view/template/total/paysoninvoice.fee.tpl (new)
+Admin/view/template/total/paysoninvoice.fee.tpl 
 
 ****Catalog****
 
