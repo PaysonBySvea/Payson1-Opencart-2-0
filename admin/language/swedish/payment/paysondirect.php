@@ -17,7 +17,7 @@ $_['payment_method_mode_sandbox']       ='Testmilj&ouml;';
 
 $_['user_name']     	       		= 'E-postadress';
 $_['agent_id']       	       		= 'Agent Id';
-$_['md5']     		     	   		= 'MD5-nyckel';
+$_['md5']     		     	   		= 'API-nyckel';
 
 
 $_['payment_method_card_bank_info'] = 'Betalningsmetoder:';
@@ -60,14 +60,14 @@ $_['entry_order_item_details_to_ignore'] 	= 'Ignorerade produktlista vid KORT oc
 $_['error_permission']   			= 'Varning: Du har inte beh&ouml;righet att &auml; ndra betalningsmetoden Payson Direkt!';
 $_['error_user_name']     			= 'E-postadress saknas!';
 $_['error_agent_id']     			= 'Agent ID saknas!';
-$_['error_md5']     				= 'MD5-nyckel saknas!';
+$_['error_md5']     				= 'API-nyckel saknas!';
 $_['error_ignored_order_totals']     		= 'Ange en kommaseparerad lista med ordertillägg som ej skall skickas till Payson';
 
 //help
 $_['help_method_mode']     	 	='V&auml;lj l&auml;get (Produktionsmilj&ouml; eller testmilj&ouml;)';
 $_['help_user_name']    	       		= 'Ange din e-postadress f&ouml;r ditt Paysonkonto';
 $_['help_agent_id']       	       		= 'Ange ditt agentID f&ouml;r ditt Paysonkonto';
-$_['help_md5']     		     	   		= 'Ange din MD5nyckel f&ouml;r ditt Paysonkonto';
+$_['help_md5']     		     	   		= 'Ange din API-nyckel f&ouml;r ditt Paysonkonto';
 $_['help_method_card_bank_info'] = 'Aktiverade betalsätt (Visa, Mastercard & Internetbank)';
 $_['help_secure_word']                      = 'Ange ett hemligt ord';
 $_['help_total']            		= 'Kassan totala ordern m&aring;ste uppn&aring; innan betalningsmetod blir aktiv';
