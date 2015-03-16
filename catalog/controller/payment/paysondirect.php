@@ -202,7 +202,7 @@ class ControllerPaymentPaysondirect extends Controller {
             return true;
         }
 
-        if ($transferStatus == "ERROR" || $transferStatus == "EXPIRED") {
+        if ($transferStatus == "ERROR" || $transferStatus == "EXPIRED"||$transferStatus == "DENIED") {
             if ($ipnCall) {
                 $this->writeToLog('Order was denied by payson.&#10;Purchase type:&#9;&#9;' . $paymentType . '&#10;Order id:&#9;&#9;&#9;&#9;' . $orderId, $paymentDetails);
             }
