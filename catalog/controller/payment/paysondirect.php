@@ -358,7 +358,7 @@ class ControllerPaymentPaysondirect extends Controller {
             $store = $this->config->get('config_store_id');                       
             $agentid = $agent[$store];
             $md5key = $md5[$store];
-            $credentials = new PaysonCredentials(trim($agentid)), trim($md5key)), null, 'payson_opencart|' . $this->config->get('paysondirect_modul_version') . '|' . VERSION);
+            $credentials = new PaysonCredentials(trim($agentid), trim($md5key), null, 'payson_opencart|' . $this->config->get('paysondirect_modul_version') . '|' . VERSION);
         } else {
             $credentials = new PaysonCredentials(4, '2acab30d-fe50-426f-90d7-8c60a7eb31d4', null, 'payson_opencart|' . $this->config->get('paysondirect_modul_version') . '|' . VERSION);
         }
