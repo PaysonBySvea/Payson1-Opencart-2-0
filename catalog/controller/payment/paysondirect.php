@@ -7,7 +7,7 @@ class ControllerPaymentPaysondirect extends Controller {
     private $isInvoice;
     private $data = array();
 
-    const MODULE_VERSION = 'Aion_1.0.2';
+    const MODULE_VERSION = 'Aion_1.0.3';
 
     function __construct($registry) {
         parent::__construct($registry);
@@ -123,11 +123,14 @@ class ControllerPaymentPaysondirect extends Controller {
         $this->load->language('payment/paysondirect');
         $this->load->model('checkout/order');
         $this->load->language('total/paysoninvoice_fee');
-        $tax = $this->config->get('paysoninvoice_fee_tax_class_id');
-        $tax_rule_id = $this->db->query("SELECT tax_rate_id FROM `" . DB_PREFIX . "tax_rule` where  tax_class_id='" . $tax . "'");
-        $invoiceFeeTax = $this->db->query("SELECT rate FROM `" . DB_PREFIX . "tax_rate` where  tax_rate_id='" . $tax_rule_id->row['tax_rate_id'] . "'");
-        $invoiceFeeTax = ($invoiceFeeTax->row['rate'] / 100) + 1;
-        $fee = $this->config->get('paysoninvoice_fee_fee') * $invoiceFeeTax;
+		$fee = $this->config->get('paysoninvoice_fee_fee');
+        if ($this->config->get('paysoninvoice_fee_tax_class_id')) {
+			$tax = $this->config->get('paysoninvoice_fee_tax_class_id');
+			$tax_rule_id = $this->db->query("SELECT tax_rate_id FROM `" . DB_PREFIX . "tax_rule` where  tax_class_id='" . $tax . "'");
+			$invoiceFeeTax = $this->db->query("SELECT rate FROM `" . DB_PREFIX . "tax_rate` where  tax_rate_id='" . $tax_rule_id->row['tax_rate_id'] . "'");
+			$invoiceFeeTax = ($invoiceFeeTax->row['rate'] / 100) + 1;
+			$fee *= $invoiceFeeTax;
+        }
         return $fee;
     }
     /**
