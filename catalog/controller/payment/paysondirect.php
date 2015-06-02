@@ -392,12 +392,15 @@ class ControllerPaymentPaysondirect extends Controller {
                     $optionsArray[] = $option['name'] . ': ' . $option['value'];
                 }
             }
-
-            $productTitle = (strlen($product['name']) > 80 ? substr($product['name'], 0, strpos($product['name'], ' ', 80)) : $product['name']);
+				
+            $productTitle = $product['name'];
 
             if (!empty($optionsArray))
                 $productTitle .= ' | ' . join('; ', $optionsArray);
 
+            $productTitle = (strlen($productTitle) > 80 ? substr($productTitle, 0, strpos($productTitle, ' ', 80)) : $productTitle);
+            
+				
             $product_price = $this->currency->format($product['price'] * 100, $order_data['currency_code'], $order_data['currency_value'], false) / 100;
 
             $this->data['order_items'][] = new OrderItem(html_entity_decode($productTitle, ENT_QUOTES, 'UTF-8'), $product_price, $product['quantity'], $product['tax_rate'], $product['model']);
