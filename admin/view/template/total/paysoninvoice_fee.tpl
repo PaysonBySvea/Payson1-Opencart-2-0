@@ -4,7 +4,7 @@
         <div class="container-fluid">
             <div class="pull-right">
 
-                <button type="submit" form="form_paysoninvoice_fee" data-toggle="tooltip" title="<?php echo $button_save; ?>" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <button type="submit" form="form-paysoninvoice_fee" data-toggle="tooltip" title="<?php echo $button_save; ?>" class="btn btn-primary"><i class="fa fa-save"></i></button>
                 <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
             <h1><?php echo $heading_title; ?></h1>
             <ul class="breadcrumb">
@@ -27,7 +27,7 @@
             </div>
             <div class="panel-body">
 
-                <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form_paysoninvoice_fee" class="form-horizontal">
+                <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form-paysoninvoice_fee" class="form-horizontal">
 
                     <div class="form-group">
 
