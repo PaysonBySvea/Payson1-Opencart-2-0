@@ -27,12 +27,15 @@ class PaymentDetails {
 
     public function __construct($responseData) {
         $this->orderItems = OrderItem::parseOrderItems($responseData);
-        $this->receivers = Receiver::parseReceivers($responseData);
-
-        $this->token = $responseData["token"];
-
-        $this->status = $responseData["status"];
-
+        $this->receivers = Receiver::parseReceivers($responseData);    
+        if(isset($responseData["token"])){
+             $this->token = $responseData["token"];   
+        }            
+        
+        if(isset($responseData["status"])){
+            $this->status = $responseData["status"];
+        }
+        
         if (isset($responseData["invoiceStatus"])){
             $this->invoiceStatus = $responseData["invoiceStatus"];
         }
@@ -66,8 +69,10 @@ class PaymentDetails {
         if (isset($responseData["correlationId"])){
             $this->correlationId = $responseData["correlationId"];
         }
-
-        $this->type = $responseData["type"];
+        if (isset($responseData["type"])){
+            $this->type = $responseData["type"];
+        }        
+        
 
         $this->currencyCode = $responseData["currencyCode"];
         if(isset($responseData["custom"]))
@@ -76,8 +81,10 @@ class PaymentDetails {
             $this->trackingId = $responseData["trackingId"];
         if(isset($responseData["purchaseId"]))
             $this->purchaseId = $responseData["purchaseId"];
-
-        $this->senderEmail = $responseData["senderEmail"];
+        if (isset($responseData["senderEmail"])){
+            $this->senderEmail = $responseData["senderEmail"];
+        } 
+        
     }
 
     /**
