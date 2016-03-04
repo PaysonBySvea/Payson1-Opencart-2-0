@@ -7,7 +7,7 @@ class ControllerPaymentPaysondirect extends Controller {
     private $isInvoice;
     private $data = array();
 
-    const MODULE_VERSION = 'Aion_1.0.4';
+    const MODULE_VERSION = 'Aion_1.0.5';
 
     function __construct($registry) {
         parent::__construct($registry);
@@ -33,7 +33,7 @@ class ControllerPaymentPaysondirect extends Controller {
             $Fee = $this->config->get('paysoninvoice_fee_fee');
             $this->data['text_invoice_terms'] = sprintf($this->language->get('text_invoice_terms'), ($this->isInvoice) ? $Fee : 0);
         }
-        
+
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/paysondirect.tpl')) {
             return $this->load->view($this->config->get('config_template') . '/template/payment/paysondirect.tpl', $this->data);
         } else {
@@ -76,14 +76,14 @@ class ControllerPaymentPaysondirect extends Controller {
             $returnData["paymentURL"] = $result["PaymentURL"];
         } else {
             $returnData["error"] = $this->language->get("text_payson_payment_error");
-        }       
-        
-        $this->response->setOutput(json_encode($returnData));
+        }
 
+        $this->response->setOutput(json_encode($returnData));
     }
+
     //Returns from Payson after the transaction has ended.
     public function returnFromPayson() {
-        
+
         $this->load->language('payment/paysondirect');
         $paymentDetails = null;
 
@@ -123,16 +123,17 @@ class ControllerPaymentPaysondirect extends Controller {
         $this->load->language('payment/paysondirect');
         $this->load->model('checkout/order');
         $this->load->language('total/paysoninvoice_fee');
-		$fee = $this->config->get('paysoninvoice_fee_fee');
+        $fee = $this->config->get('paysoninvoice_fee_fee');
         if ($this->config->get('paysoninvoice_fee_tax_class_id')) {
-			$tax = $this->config->get('paysoninvoice_fee_tax_class_id');
-			$tax_rule_id = $this->db->query("SELECT tax_rate_id FROM `" . DB_PREFIX . "tax_rule` where  tax_class_id='" . $tax . "'");
-			$invoiceFeeTax = $this->db->query("SELECT rate FROM `" . DB_PREFIX . "tax_rate` where  tax_rate_id='" . $tax_rule_id->row['tax_rate_id'] . "'");
-			$invoiceFeeTax = ($invoiceFeeTax->row['rate'] / 100) + 1;
-			$fee *= $invoiceFeeTax;
+            $tax = $this->config->get('paysoninvoice_fee_tax_class_id');
+            $tax_rule_id = $this->db->query("SELECT tax_rate_id FROM `" . DB_PREFIX . "tax_rule` where  tax_class_id='" . $tax . "'");
+            $invoiceFeeTax = $this->db->query("SELECT rate FROM `" . DB_PREFIX . "tax_rate` where  tax_rate_id='" . $tax_rule_id->row['tax_rate_id'] . "'");
+            $invoiceFeeTax = ($invoiceFeeTax->row['rate'] / 100) + 1;
+            $fee *= $invoiceFeeTax;
         }
         return $fee;
     }
+
     /**
      * 
      * @param PaymentDetails $paymentDetails
@@ -205,7 +206,7 @@ class ControllerPaymentPaysondirect extends Controller {
             return true;
         }
 
-        if ($transferStatus == "ERROR" || $transferStatus == "EXPIRED"||$transferStatus == "DENIED") {
+        if ($transferStatus == "ERROR" || $transferStatus == "EXPIRED" || $transferStatus == "DENIED") {
             if ($ipnCall) {
                 $this->writeToLog('Order was denied by payson.&#10;Purchase type:&#9;&#9;' . $paymentType . '&#10;Order id:&#9;&#9;&#9;&#9;' . $orderId, $paymentDetails);
             }
@@ -236,7 +237,7 @@ class ControllerPaymentPaysondirect extends Controller {
             14 => array('bank', 'card', 'invoice'),
             15 => array('sms', 'bank', 'card', 'invoice'),
         );
-        $optsStrings = array('' => FundingConstraint::NONE, 'bank' => FundingConstraint::BANK, 'card' => FundingConstraint::CREDITCARD, 'invoice' => FundingConstraint::INVOICE,  'sms' => FundingConstraint::SMS);
+        $optsStrings = array('' => FundingConstraint::NONE, 'bank' => FundingConstraint::BANK, 'card' => FundingConstraint::CREDITCARD, 'invoice' => FundingConstraint::INVOICE, 'sms' => FundingConstraint::SMS);
         if ($opts[$paymentMethod]) {
             foreach ($opts[$paymentMethod] as $methodStringName) {
                 $constraints[] = $optsStrings[$methodStringName];
@@ -266,10 +267,10 @@ class ControllerPaymentPaysondirect extends Controller {
             }
 //          If not order not from Sweden, remove invoice option from funding_array
             $countryCode = trim(strtoupper($this->data['countrycode']));
-            if($countryCode!=='SWEDEN' && $countryCode!=='SVERIGE'){                    
-               $key = array_search(FundingConstraint::INVOICE, $constraints);
-                unset($constraints[$key]); 
-            }         
+            if ($countryCode !== 'SWEDEN' && $countryCode !== 'SVERIGE') {
+                $key = array_search(FundingConstraint::INVOICE, $constraints);
+                unset($constraints[$key]);
+            }
         }
 //      If Invoice still exist after these checks then add InvoiceFee to order.
         if (in_array(FundingConstraint::INVOICE, $constraints)) {
@@ -277,8 +278,10 @@ class ControllerPaymentPaysondirect extends Controller {
         }
         if (!$this->testMode) {
             $user = explode('##', $this->config->get('paysondirect_user_name'));
-            $store = $this->config->get('config_store_id');
-            $userName = $user[$store];
+            $storeID = $this->config->get('config_store_id');
+            $shopArray = $this->getCredentials('store_id', 'store');
+            $multiStore = array_search($storeID, $shopArray);
+            $userName = $user[$multiStore];
             $receiver = new Receiver(trim($userName), $this->data['amount']);
         } else {
             $receiver = new Receiver('testagent-1@payson.se', $this->data['amount']);
@@ -303,14 +306,14 @@ class ControllerPaymentPaysondirect extends Controller {
         } else {
             $this->writeArrayToLog($orderItems, sprintf('Order items sent to Payson, with Payson direct as payment option, Total amount(%sSEK)', $this->data['amount']));
         }
-        
+
 
         $payData->setFundingConstraints($constraints);
         $payData->setGuaranteeOffered('NO');
         $payData->setTrackingId($this->data['salt']);
 
         $payResponse = $this->api->pay($payData);
-        
+
         if ($payResponse->getResponseEnvelope()->wasSuccessful()) {
             return array("Result" => "OK", "PaymentURL" => $this->api->getForwardPayUrl($payResponse));
         } else {
@@ -352,15 +355,38 @@ class ControllerPaymentPaysondirect extends Controller {
         return 'Module version: ' . $this->config->get('paysondirect_modul_version') . '&#10;------------------------------------------------------------------------&#10;';
     }
 
+    private function getCredentials() {
+        $storesInShop = $this->db->query("SELECT store_id FROM `" . DB_PREFIX . "store`");
+
+        $numberOfStores = $storesInShop->rows;
+
+        $keys = array_keys($numberOfStores);
+        //Since the store table do not contain the fist storeID this must be entered manualy in the $shopArray below
+        $shopArray = array(0 => 0);
+        for ($i = 0; $i < count($numberOfStores); $i++) {
+
+            foreach ($numberOfStores[$keys[$i]] as $value) {
+                array_push($shopArray, $value);
+            }
+        }
+        return $shopArray;
+    }
+
     private function getAPIInstance() {
         require_once 'payson/paysonapi.php';
 
         if (!$this->testMode) {
-            $agent = explode('##', $this->config->get('paysondirect_agent_id')); 
+
+            $agent = explode('##', $this->config->get('paysondirect_agent_id'));
             $md5 = explode('##', $this->config->get('paysondirect_md5'));
-            $store = $this->config->get('config_store_id');                       
-            $agentid = $agent[$store];
-            $md5key = $md5[$store];
+            $storeID = $this->config->get('config_store_id');
+
+            $shopArray = $this->getCredentials();
+            $multiStore = array_search($storeID, $shopArray);
+
+            $agentid = $agent[$multiStore];
+            $md5key = $md5[$multiStore];
+
             $credentials = new PaysonCredentials(trim($agentid), trim($md5key), null, 'payson_opencart|' . $this->config->get('paysondirect_modul_version') . '|' . VERSION);
         } else {
             $credentials = new PaysonCredentials(4, '2acab30d-fe50-426f-90d7-8c60a7eb31d4', null, 'payson_opencart|' . $this->config->get('paysondirect_modul_version') . '|' . VERSION);
@@ -392,15 +418,15 @@ class ControllerPaymentPaysondirect extends Controller {
                     $optionsArray[] = $option['name'] . ': ' . $option['value'];
                 }
             }
-				
+
             $productTitle = $product['name'];
 
             if (!empty($optionsArray))
                 $productTitle .= ' | ' . join('; ', $optionsArray);
 
             $productTitle = (strlen($productTitle) > 80 ? substr($productTitle, 0, strpos($productTitle, ' ', 80)) : $productTitle);
-            
-				
+
+
             $product_price = $this->currency->format($product['price'] * 100, $order_data['currency_code'], $order_data['currency_value'], false) / 100;
 
             $this->data['order_items'][] = new OrderItem(html_entity_decode($productTitle, ENT_QUOTES, 'UTF-8'), $product_price, $product['quantity'], $product['tax_rate'], $product['model']);
