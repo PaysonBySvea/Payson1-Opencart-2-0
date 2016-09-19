@@ -284,7 +284,7 @@ class ControllerPaymentPaysondirect extends Controller {
             $userName = $user[$multiStore];
             $receiver = new Receiver(trim($userName), $this->data['amount']);
         } else {
-            $receiver = new Receiver('testagent-1@payson.se', $this->data['amount']);
+            $receiver = new Receiver('testagent-checkout2@payson.se', $this->data['amount']);
         }
 
         $sender = new Sender($this->data['sender_email'], $this->data['sender_first_name'], $this->data['sender_last_name']);
