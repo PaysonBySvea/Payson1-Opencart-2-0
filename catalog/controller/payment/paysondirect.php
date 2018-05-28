@@ -224,10 +224,10 @@ class ControllerPaymentPaysondirect extends Controller {
             1 => array('card'),
             2 => array('bank'),
             3 => array('invoice'),
-            7 => array('bank', 'card'),
-            10 => array('bank', 'invoice'),
-            11 => array('card', 'invoice'),
-            14 => array('bank', 'card', 'invoice'),
+            4 => array('bank', 'card'),
+            5 => array('bank', 'invoice'),
+            6 => array('card', 'invoice'),
+            7 => array('bank', 'card', 'invoice'),
         );
         $optsStrings = array('' => FundingConstraint::NONE, 'bank' => FundingConstraint::BANK, 'card' => FundingConstraint::CREDITCARD, 'invoice' => FundingConstraint::INVOICE);
         if ($opts[$paymentMethod]) {
