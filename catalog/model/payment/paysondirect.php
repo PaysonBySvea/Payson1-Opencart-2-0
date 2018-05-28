@@ -11,18 +11,10 @@ class ModelPaymentPaysondirect extends Model {
             1 => array('card'),
             2 => array('bank'),
             3 => array('invoice'),
-            4 => array('sms'),
-            5 => array('sms', 'bank'),
-            6 => array('sms', 'card'),
-            7 => array('bank', 'card'),
-            8 => array('bank', 'card', 'sms'),
-            9 => array('sms', 'invoice'),
-            10 => array('bank', 'invoice'),
-            11 => array('card', 'invoice'),
-            12 => array('sms', 'bank', 'invoice'),
-            13 => array('sms', 'card', 'invoice'),
-            14 => array('bank', 'card', 'invoice'),
-            15 => array('sms', 'bank', 'card', 'invoice'),
+            4 => array('bank', 'card'),
+            5 => array('bank', 'invoice'),
+            6 => array('card', 'invoice'),
+            7 => array('bank', 'card', 'invoice'),
         );
         return $opts[$paymentMethod];
     }
@@ -55,17 +47,10 @@ class ModelPaymentPaysondirect extends Model {
 
             $constraints = $this->getPaymentMethods($this->config->get('paysondirect_payment_method'));
 
-
-            if ((in_array('sms', $constraints)) && (in_array('invoice', $constraints))) {
-                $title = $this->language->get('text_AION_SMS');
-            }
-            if ((in_array('invoice', $constraints)) && (!in_array('sms', $constraints))) {
+            if (in_array('invoice', $constraints)) {
                 $title = $this->language->get('text_AION_INVOICE');
             }
-            if ((in_array('sms', $constraints)) && (!in_array('invoice', $constraints))) {
-                $title = $this->language->get('text_title_SMS');
-            }
-            if ((!in_array('sms', $constraints)) && (!in_array('invoice', $constraints))) {
+            if (!in_array('invoice', $constraints)) {
                 $title = $this->language->get('text_title');
             }
 
