@@ -7,7 +7,7 @@ class ControllerPaymentPaysondirect extends Controller {
     private $isInvoice;
     private $data = array();
 
-    const MODULE_VERSION = 'Aion_1.0.6';
+    const MODULE_VERSION = 'Aion_1.0.7';
 
     function __construct($registry) {
         parent::__construct($registry);
@@ -413,12 +413,27 @@ class ControllerPaymentPaysondirect extends Controller {
 
             $productTitle = $product['name'];
 
-            if (!empty($optionsArray))
+            if (!empty($optionsArray)) {
                 $productTitle .= ' | ' . join('; ', $optionsArray);
+            }
 
             $productTitle = (strlen($productTitle) > 80 ? substr($productTitle, 0, strpos($productTitle, ' ', 80)) : $productTitle);
 
-
+            // If no product title use model
+            if (strlen(trim($productTitle)) == 0) {
+                $this->writeToLog("Missing product name");
+                $this->writeToLog("Order ID: " . $orderId);
+                $this->writeToLog("Product: " . print_r($product, true));
+                $this->writeToLog("Options: " . print_r($optionsArray, true));
+                
+                $productTitle = $product['model'];
+                if (!empty($optionsArray)) {
+                    $productTitle .= ' | ' . join('; ', $optionsArray);
+                }
+                $this->writeToLog("Will use product model name instead: " . $productTitle);
+                $this->writeToLog("End missing product name");
+            }
+            
             $product_price = $this->currency->format($product['price'] * 100, $order_data['currency_code'], $order_data['currency_value'], false) / 100;
 
             $this->data['order_items'][] = new OrderItem(html_entity_decode($productTitle, ENT_QUOTES, 'UTF-8'), $product_price, $product['quantity'], $product['tax_rate'], $product['model']);
