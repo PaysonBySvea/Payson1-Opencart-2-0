@@ -7,7 +7,7 @@ $_['heading_title'] = 'Payson All in One';
 
 // Text
 $_['text_modul_name'] = 'Payson_Allinone';
-$_['text_modul_version'] = '1.0.8';
+$_['text_modul_version'] = '1.0.9';
 $_['text_payment'] = 'Payment';
 $_['text_success'] = 'Success: You have modified Payson All in One payment module!';
 $_['text_paysondirect'] = '<a onclick="window.open(\'https://www.payson.se/tj%C3%A4nster/ta-betalt\');"><img src="view/image/payment/Allinone.png" alt="Payson" title="Payson" /></a>';
@@ -48,6 +48,9 @@ $_['entry_show_receipt_page'] = 'Show Receipt Page';
 $_['entry_show_receipt_page_yes'] = 'Yes';
 $_['entry_show_receipt_page_no'] = 'No';
 
+$_['entry_send_payson_order'] = 'Send Payson Order';
+$_['entry_send_payson_order_yes'] = 'Yes';
+$_['entry_send_payson_order_no'] = 'No';
 
 $_['entry_order_item_details_to_ignore'] = 'Order Item Details to ignore by CREDITCARD / BANK:<br /><span class="help">Note: Order Items are required for INVOICE payments and optional for other payment types. Also, please note that the total sum of all order items amount (inc. VAT) must match the total sum of all receivers amount.</span>';
 // Error
@@ -65,6 +68,7 @@ $_['help_method_card_bank_info'] = 'Enabled payment methods (Visa, Mastercard & 
 $_['help_secure_word'] = 'Enter a secure word for Paysondirect';
 $_['help_logg'] = 'You can find your logs in Admin | System -> Error Log';
 $_['help_total'] = 'The checkout total the order must reach before this payment method becomes active';
+$_['help_send_payson_order'] = 'Mark an invoice payment as shipped. The sender will be notified by Payson that an invoice has been created';
 $_['help_totals_to_ignore'] = 'Comma separated list with order totals not to send to payson';
 
 ?>

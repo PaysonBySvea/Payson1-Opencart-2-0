@@ -72,6 +72,10 @@ class ControllerPaymentPaysondirect extends Controller {
         $this->data['entry_show_receipt_page_yes'] = $this->language->get('entry_show_receipt_page_yes');
         $this->data['entry_show_receipt_page_no'] = $this->language->get('entry_show_receipt_page_no');
 
+        $this->data['entry_send_payson_order'] = $this->language->get('entry_send_payson_order');
+        $this->data['entry_send_payson_order_yes'] = $this->language->get('entry_send_payson_order_yes');
+        $this->data['entry_send_payson_order_no'] = $this->language->get('entry_send_payson_order_no');
+
         $this->data['button_save'] = $this->language->get('button_save');
         $this->data['button_cancel'] = $this->language->get('button_cancel');
         
@@ -86,6 +90,7 @@ class ControllerPaymentPaysondirect extends Controller {
         $this->data['help_secure_word'] = $this->language->get('help_secure_word');
         $this->data['help_logg'] = $this->language->get('help_logg');
         $this->data['help_total'] = $this->language->get('help_total');
+        $this->data['help_send_payson_order'] = $this->language->get('help_send_payson_order');
         $this->data['help_totals_to_ignore'] = $this->language->get('help_totals_to_ignore');       
         
 
@@ -242,6 +247,13 @@ class ControllerPaymentPaysondirect extends Controller {
         } else {
             $this->data['paysondirect_receipt'] = $this->config->get('paysondirect_receipt');
         }
+
+        if (isset($this->request->post['paysondirect_send_payson_order'])) {
+            $this->data['paysondirect_send_payson_order'] = $this->request->post['paysondirect_send_payson_order'];
+        } else {
+            $this->data['paysondirect_send_payson_order'] = $this->config->get('paysondirect_send_payson_order');
+        }
+
         if (isset($this->request->post['paysondirect_ignored_order_totals'])) {
             $this->data['paysondirect_ignored_order_totals'] = $this->request->post['paysondirect_ignored_order_totals'];
         } else {

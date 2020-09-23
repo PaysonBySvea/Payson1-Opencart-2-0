@@ -196,6 +196,15 @@
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <select name="paysondirect_send_payson_order" id="input-receipt" class="form-control">
+                                <option value="1" <?=($paysondirect_send_payson_order?'selected':'')?>> <?php echo $entry_send_payson_order_yes; ?></option>
+                                <option value="0" <?=($paysondirect_send_payson_order?'':'selected')?>><?php echo $entry_send_payson_order_no; ?></option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="form-group required">
                         <label class="col-sm-2 control-label" for="input-ignored-order-totals"><span data-toggle="tooltip" title="<?php echo $help_totals_to_ignore; ?>"><?php echo $entry_totals_to_ignore; ?></span></label>
 

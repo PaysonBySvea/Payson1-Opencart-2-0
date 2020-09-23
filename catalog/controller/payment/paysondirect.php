@@ -7,7 +7,7 @@ class ControllerPaymentPaysondirect extends Controller {
     private $isInvoice;
     private $data = array();
 
-    const MODULE_VERSION = 'Aion_1.0.8';
+    const MODULE_VERSION = 'Aion_1.0.9';
 
     function __construct($registry) {
         parent::__construct($registry);
@@ -199,6 +199,14 @@ class ControllerPaymentPaysondirect extends Controller {
 
         if ($succesfullStatus) {
             if (!$order_info['order_status_id']) {
+                if($this->config->get('paysondirect_send_payson_order') && $paymentType == "INVOICE" && $invoiceStatus == "ORDERCREATED"){
+                    $paymentUpdateData = new PaymentUpdateData(
+                        $paymentDetails->getToken(),
+                        PaymentUpdateMethod::ShipOrder
+                    );
+                    $paymentUpdateResponse = $this->api->paymentUpdate($paymentUpdateData);
+                }
+
                 $this->model_checkout_order->addOrderHistory($orderId, $succesfullStatus);
             } else {
                 //$this->model_checkout_order->update($orderId, $succesfullStatus);

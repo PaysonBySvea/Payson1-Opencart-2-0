@@ -44,6 +44,10 @@ $_['entry_show_receipt_page']           = 'Visa Kvittosidan';
 $_['entry_show_receipt_page_yes']           = 'Ja';
 $_['entry_show_receipt_page_no']           = 'Nej';
 
+$_['entry_send_payson_order']           = 'Send Order';
+$_['entry_send_payson_order_yes']           = 'Ja';
+$_['entry_send_payson_order_no']           = 'Nej';
+
 $_['entry_order_item_details_to_ignore'] 	= 'Ignorerade produktlista vid KORT och BANK:<br /><span class="help">Note: produklistan kr&auml;vs f&ouml;r fakturabetalning och frivilligt f&ouml;r andra typer av betalningar.</span>';
 // Error
 $_['error_permission']   			= 'Varning: Du har inte beh&ouml;righet att &auml; ndra betalningsmetoden Payson Direkt!';
@@ -61,6 +65,7 @@ $_['help_method_card_bank_info'] = 'Aktiverade betalsätt (Visa, Mastercard & In
 $_['help_secure_word']                      = 'Ange ett hemligt ord';
 $_['help_total']            		= 'Kassan totala ordern m&aring;ste uppn&aring; innan betalningsmetod blir aktiv';
 $_['help_logg']  			= 'Du hittar dina loggar i Admin | System -> Error Log';
+$_['help_send_payson_order']            = 'Markera en faktureringsbetalning som levererad. Avsändaren kommer att meddelas av Payson att en faktura har skapats';
 $_['help_totals_to_ignore']           = 'Kommaseparerad lista med ordertillägg som ej skall skickas till Payson';
 
 ?>
