@@ -197,6 +197,7 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-logg"><span data-toggle="tooltip" title="<?php echo $help_send_payson_order; ?>"><?php echo $entry_send_payson_order; ?></span></label>
                         <div class="col-sm-10">
                             <select name="paysondirect_send_payson_order" id="input-receipt" class="form-control">
                                 <option value="1" <?=($paysondirect_send_payson_order?'selected':'')?>> <?php echo $entry_send_payson_order_yes; ?></option>
