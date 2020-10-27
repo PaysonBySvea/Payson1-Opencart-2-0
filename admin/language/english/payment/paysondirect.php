@@ -7,7 +7,7 @@ $_['heading_title'] = 'Payson All in One';
 
 // Text
 $_['text_modul_name'] = 'Payson_Allinone';
-$_['text_modul_version'] = '1.1.0';
+$_['text_modul_version'] = '1.1.1';
 $_['text_payment'] = 'Payment';
 $_['text_success'] = 'Success: You have modified Payson All in One payment module!';
 $_['text_paysondirect'] = '<a onclick="window.open(\'https://www.payson.se/tj%C3%A4nster/ta-betalt\');"><img src="view/image/payment/Allinone.png" alt="Payson" title="Payson" /></a>';

@@ -1,18 +1,16 @@
 <?php
 
 require_once "responseenvelope.php";
-require_once "orderitem.php";
-require_once "receiver.php";
-require_once "paymentdetails.php";
+require_once "accountdetails.php";
 
-class PaymentDetailsResponse {
+class AccountDetailsResponse {
 
     protected $responseEnvelope;
-    protected $paymentDetails;
+    protected $accountDetails;
 
     public function __construct($responseData) {
         $this->responseEnvelope = new ResponseEnvelope($responseData);
-        $this->paymentDetails = new PaymentDetails($responseData);
+        $this->accountDetails = new AccountDetails($responseData);
     }
 
     /**
@@ -27,21 +25,21 @@ class PaymentDetailsResponse {
     }
 
     /**
-     * Returns the payment details from the response
+     * Returns the account details from the response
      * 
-     * @return PaymentDetails
+     * @return AccountDetails
      */
-    public function getPaymentDetails() {
-        return $this->paymentDetails;
+    public function getAccountDetails() {
+        return $this->accountDetails;
     }
 
     /**
-     * Returns a string representation of the payment details
+     * Returns a string representation of the account  details
      * 
      * @return string
      */
     public function __toString() {
-        return $this->paymentDetails->__toString();
+        return $this->accountDetails->__toString();
     }
 
 }
