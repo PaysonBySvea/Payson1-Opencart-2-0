@@ -3,7 +3,7 @@
 class ModelPaymentPaysondirect extends Model {
 
     private $currency_supported_by_p_direct = array('SEK', 'EUR');
-    private $minimumAmount = 4;
+    private $minimumAmount = 10;
 
     private function getPaymentMethods($paymentMethod) {
         $opts = array(
