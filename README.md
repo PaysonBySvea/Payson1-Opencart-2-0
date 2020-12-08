@@ -1,5 +1,9 @@
 # Payson 1.0
 
+## Information
+
+(We support OpenCart 2.3.X - 3.X. Older versions can be found here)
+
 ## Description
 
 Module for OpenCart 2.X implementing Payson 1.0
