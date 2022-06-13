@@ -7,7 +7,7 @@ class ControllerPaymentPaysondirect extends Controller {
     private $isInvoice;
     private $data = array();
 
-    const MODULE_VERSION = 'Aion_1.1.2';
+    const MODULE_VERSION = 'Aion_1.1.3';
 
     function __construct($registry) {
         parent::__construct($registry);
@@ -126,8 +126,8 @@ class ControllerPaymentPaysondirect extends Controller {
         $fee = $this->config->get('paysoninvoice_fee_fee');
         if ($this->config->get('paysoninvoice_fee_tax_class_id')) {
             $tax = $this->config->get('paysoninvoice_fee_tax_class_id');
-            $tax_rule_id = $this->db->query("SELECT tax_rate_id FROM `" . DB_PREFIX . "tax_rule` where  tax_class_id='" . $tax . "'");
-            $invoiceFeeTax = $this->db->query("SELECT rate FROM `" . DB_PREFIX . "tax_rate` where  tax_rate_id='" . $tax_rule_id->row['tax_rate_id'] . "'");
+            $tax_rule_id = $this->db->query("SELECT tax_rate_id FROM `" . DB_PREFIX . "tax_rule` where  tax_class_id='" . (int) $tax . "'");
+            $invoiceFeeTax = $this->db->query("SELECT rate FROM `" . DB_PREFIX . "tax_rate` where  tax_rate_id='" . (int) $tax_rule_id->row['tax_rate_id'] . "'");
             $invoiceFeeTax = ($invoiceFeeTax->row['rate'] / 100) + 1;
             $fee *= $invoiceFeeTax;
         }
@@ -168,33 +168,33 @@ class ControllerPaymentPaysondirect extends Controller {
         if ($paymentType == "INVOICE" && $invoiceStatus == "ORDERCREATED") {
             $succesfullStatus = $this->config->get('paysondirect_invoice_status_id');
 
-            $invoiceFee = $this->db->query("SELECT code FROM `" . DB_PREFIX . "order_total` where code='paysoninvoice_fee' and order_id='" . $orderId . "'");
+            $invoiceFee = $this->db->query("SELECT code FROM `" . DB_PREFIX . "order_total` where code='paysoninvoice_fee' and order_id='" . (int) $orderId . "'");
 
             if ($invoiceFee->num_rows == 0) {
 
                 $this->db->query("INSERT INTO `" . DB_PREFIX . "order_total` (order_id, code, title, value, sort_order)
-                    VALUES('" . $orderId . "', "
+                    VALUES('" . (int) $orderId . "', "
                         . "'paysoninvoice_fee',  "
-                        . "'" . $this->language->get('text_paysoninvoice_fee') . "',  "
-                        . "'" . $this->getInvoiceFee() . "',  "
+                        . "'" . $this->db->escape($this->language->get('text_paysoninvoice_fee')) . "',  "
+                        . "'" . (float)  $this->getInvoiceFee() . "',  "
                         . "'" . 2 . "')");
 
                 $this->db->query("UPDATE `" . DB_PREFIX . "order_total` SET
-                                value  = '" . $total . "'
-                                WHERE order_id      = '" . $orderId . "' 
+                                value  = '" . (float) $total . "'
+                                WHERE order_id      = '" .(int) $orderId . "' 
                                 and code = 'total'");
             }
 
             $this->db->query("UPDATE `" . DB_PREFIX . "order` SET 
-                                shipping_firstname  = '" . $paymentDetails->getShippingAddressName() . "',
+                                shipping_firstname  = '" . $this->db->escape($paymentDetails->getShippingAddressName()) . "',
                                 shipping_lastname   = '',
-                                shipping_address_1  = '" . $paymentDetails->getShippingAddressStreetAddress() . "',
-                                shipping_city       = '" . $paymentDetails->getShippingAddressCity() . "', 
-                                shipping_country    = '" . $paymentDetails->getShippingAddressCountry() . "', 
-                                shipping_postcode   = '" . $paymentDetails->getShippingAddressPostalCode() . "',
-                                total                   = '" . $total . "',
-                                payment_code            = 'paysoninvoice'
-                                WHERE order_id      = '" . $orderId . "'");
+                                shipping_address_1  = '" . $this->db->escape($paymentDetails->getShippingAddressStreetAddress()) . "',
+                                shipping_city       = '" . $this->db->escape($paymentDetails->getShippingAddressCity()) . "', 
+                                shipping_country    = '" . $this->db->escape($paymentDetails->getShippingAddressCountry()) . "', 
+                                shipping_postcode   = '" . $this->db->escape($paymentDetails->getShippingAddressPostalCode()) . "',
+                                total               = '" . (float) $total . "',
+                                payment_code        = 'paysoninvoice'
+                                WHERE order_id      = '" . (int) $orderId . "'");
         }
 
         if ($succesfullStatus) {
@@ -406,7 +406,7 @@ class ControllerPaymentPaysondirect extends Controller {
 
         $order_data = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
-        $query = "SELECT `order_product_id`, `name`, `model`, `price`, `quantity`, `tax` / `price` as 'tax_rate' FROM `" . DB_PREFIX . "order_product` WHERE `order_id` = " . (int) $orderId . " UNION ALL SELECT 0, '" . $this->language->get('text_gift_card') . "', `code`, `amount`, '1', 0.00 FROM `" . DB_PREFIX . "order_voucher` WHERE `order_id` = " . (int) $orderId;
+        $query = "SELECT `order_product_id`, `name`, `model`, `price`, `quantity`, `tax` / `price` as 'tax_rate' FROM `" . DB_PREFIX . "order_product` WHERE `order_id` = " . (int) $orderId . " UNION ALL SELECT 0, '" . $this->db->escape($this->language->get('text_gift_card')) . "', `code`, `amount`, '1', 0.00 FROM `" . DB_PREFIX . "order_voucher` WHERE `order_id` = " . (int) $orderId;
         $product_query = $this->db->query($query)->rows;
 
         foreach ($product_query as $product) {
@@ -568,24 +568,24 @@ class ControllerPaymentPaysondirect extends Controller {
     private function storeIPNResponse($paymentDetails, $orderId) {
 
         $this->db->query("INSERT INTO " . DB_PREFIX . "payson_order SET 
-                            order_id                      = '" . $orderId . "', 
+                            order_id                      = '" . (int) $orderId . "', 
                             valid                         = '" . 1 . "', 
                             added                         = NOW(), 
                             updated                       = NOW(), 
-                            ipn_status                    = '" . $paymentDetails->getStatus() . "',     
-                            sender_email                  = '" . $paymentDetails->getSenderEmail() . "', 
-                            currency_code                 = '" . $paymentDetails->getCurrencyCode() . "',
-                            tracking_id                   = '" . $paymentDetails->getTrackingId() . "',
-                            type                          = '" . $paymentDetails->getType() . "',
-                            purchase_id                   = '" . $paymentDetails->getPurchaseId() . "',
-                            invoice_status                = '" . $paymentDetails->getInvoiceStatus() . "',
-                            customer                      = '" . $paymentDetails->getCustom() . "', 
-                            shippingAddress_name          = '" . $paymentDetails->getShippingAddressName() . "', 
-                            shippingAddress_street_ddress = '" . $paymentDetails->getShippingAddressStreetAddress() . "', 
-                            shippingAddress_postal_code   = '" . $paymentDetails->getShippingAddressPostalCode() . "', 
-                            shippingAddress_city          = '" . $paymentDetails->getShippingAddressPostalCode() . "', 
-                            shippingAddress_country       = '" . $paymentDetails->getShippingAddressCity() . "', 
-                            token                         =  '" . $paymentDetails->getToken() . "'"
+                            ipn_status                    = '" . $this->db->escape($paymentDetails->getStatus()) . "',     
+                            sender_email                  = '" . $this->db->escape($paymentDetails->getSenderEmail()) . "', 
+                            currency_code                 = '" . $this->db->escape($paymentDetails->getCurrencyCode()) . "',
+                            tracking_id                   = '" . $this->db->escape($paymentDetails->getTrackingId()) . "',
+                            type                          = '" . $this->db->escape($paymentDetails->getType()) . "',
+                            purchase_id                   = '" . $this->db->escape($paymentDetails->getPurchaseId()) . "',
+                            invoice_status                = '" . $this->db->escape($paymentDetails->getInvoiceStatus()) . "',
+                            customer                      = '" . $this->db->escape($paymentDetails->getCustom()) . "', 
+                            shippingAddress_name          = '" . $this->db->escape($paymentDetails->getShippingAddressName()) . "', 
+                            shippingAddress_street_ddress = '" . $this->db->escape($paymentDetails->getShippingAddressStreetAddress()) . "', 
+                            shippingAddress_postal_code   = '" . $this->db->escape($paymentDetails->getShippingAddressPostalCode()) . "', 
+                            shippingAddress_city          = '" . $this->db->escape($paymentDetails->getShippingAddressPostalCode()) . "', 
+                            shippingAddress_country       = '" . $this->db->escape($paymentDetails->getShippingAddressCity()) . "', 
+                            token                         = '" . $this->db->escape($paymentDetails->getToken()) . "'"
         );
     }
 
