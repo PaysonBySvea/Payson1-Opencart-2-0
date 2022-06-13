@@ -176,7 +176,7 @@ class ControllerPaymentPaysondirect extends Controller {
                     VALUES('" . (int) $orderId . "', "
                         . "'paysoninvoice_fee',  "
                         . "'" . $this->db->escape($this->language->get('text_paysoninvoice_fee')) . "',  "
-                        . "'" . (float)  $this->getInvoiceFee() . "',  "
+                        . "'" . (float) $this->getInvoiceFee() . "',  "
                         . "'" . 2 . "')");
 
                 $this->db->query("UPDATE `" . DB_PREFIX . "order_total` SET
