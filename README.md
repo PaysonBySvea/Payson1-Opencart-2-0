@@ -2,6 +2,8 @@
 
 ## Information
 
+We unfortunately do not provide technical support for this version of the module. In order for Payson to guarantee optimal performance and support, we recommend always having the latest module version installed.
+
 (We support OpenCart 2.3.X - 3.X. Older versions can be found here)
 
 ## Description
