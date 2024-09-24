@@ -7,7 +7,7 @@ $_['heading_title']            		= 'Payson All in One';
 // Text
 $_['text_payment']             		= 'Payment';
 $_['text_success']       	   		= 'Success: Du har &auml;ndrat Payson Direktbetalning modulen!';
-$_['text_paysondirect']       		= '<a onclick="window.open(\'https://www.payson.se/tj%C3%A4nster/ta-betalt\');"><img src="view/image/payment/Allinone.png" alt="Payson" title="Payson" /></a>';
+$_['text_paysondirect']       		= '<a onclick="window.open(\'https://www.svea.com/sv-se/foretag/betallosningar/e-handel/payson-checkout\');"><img src="view/image/payment/Allinone.png" alt="Payson" title="Payson" /></a>';
 $_['text_edit']                         = 'Uppdatera Payson Invoice';
 
 // Entry

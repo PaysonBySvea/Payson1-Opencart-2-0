@@ -9,7 +9,7 @@ $_['heading_title']      			   = 'Payson Faktura';
 // Text
 $_['text_payment']       			   = 'Payment';
 $_['text_success']       			   = 'Success: Du har &auml; ndrat Payson Direktbetalning modulen!';
-$_['text_paysoninvoice'] 			   = '<a onclick="window.open(\'https://www.payson.se/tj%C3%A4nster/paysonfaktura\');"><img src="view/image/payment/paysoninvoice.png" alt="Payson Invoice" title="Payson" /></a>';
+$_['text_paysoninvoice'] 			   = '<a onclick="window.open(\'https://www.svea.com/sv-se/foretag/betallosningar/e-handel/payson-checkout\');"><img src="view/image/payment/paysoninvoice.png" alt="Payson Invoice" title="Payson" /></a>';
 
 $_['entry_sort_order']   			= 'Sort Order:';
 $_['entry_status']       			= 'Status:';
